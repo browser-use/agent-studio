@@ -16,6 +16,26 @@ export default function OverviewTab() {
     ? Math.floor((Date.now() - new Date(state.startTime).getTime()) / 1000)
     : 0
 
+  // Helper function to replace "Unknown" with "N/A"
+  const formatValue = (value: string | string[] | undefined | null): string => {
+    if (!value || value === "Unknown") return "N/A"
+    if (Array.isArray(value)) {
+      if (value.length === 0 || (value.length === 1 && value[0] === "Unknown")) return "N/A"
+      return value.filter(v => v !== "Unknown").join(", ") || "N/A"
+    }
+    return value
+  }
+
+  // Parse structured output
+  let structuredData = null
+  if (state.output) {
+    try {
+      structuredData = typeof state.output === 'string' ? JSON.parse(state.output) : state.output
+    } catch (error) {
+      console.error('Failed to parse structured output:', error)
+    }
+  }
+
   const handleShare = async () => {
     try {
       // Use Browser Use public share URL if available, otherwise use current URL
@@ -45,68 +65,84 @@ export default function OverviewTab() {
   }
 
   return (
-    <div className="h-full overflow-auto">
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
-        {/* Stats Cards */}
+    <div className="h-full overflow-y-auto">
+      <div className="p-6 space-y-6">
+        {/* Status Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Steps Completed</p>
-                <p className="text-2xl font-bold text-white">{completedSteps}/{totalSteps}</p>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-green-600/20 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-green-400" />
               </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
+              <div>
+                <p className="text-gray-400 text-sm">Steps Completed</p>
+                <p className="text-white text-xl font-semibold">{completedSteps}/{totalSteps}</p>
+              </div>
             </div>
           </div>
-          
+
           <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Files Generated</p>
-                <p className="text-2xl font-bold text-white">{filesGenerated}</p>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                <FileText className="w-5 h-5 text-blue-400" />
               </div>
-              <FileText className="w-8 h-8 text-primary" />
+              <div>
+                <p className="text-gray-400 text-sm">Files Generated</p>
+                <p className="text-white text-xl font-semibold">{filesGenerated}</p>
+              </div>
             </div>
           </div>
-          
+
           <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Task Status</p>
-                <p className="text-2xl font-bold text-white capitalize">{state.taskStatus || 'Ready'}</p>
+            <div className="flex items-center space-x-3">
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                state.taskStatus === 'finished' 
+                  ? 'bg-green-600/20' 
+                  : state.taskStatus === 'running'
+                  ? 'bg-blue-600/20'
+                  : state.taskStatus === 'failed' || state.taskStatus === 'stopped'
+                  ? 'bg-red-600/20'
+                  : 'bg-gray-600/20'
+              }`}>
+                <Globe className={`w-5 h-5 ${
+                  state.taskStatus === 'finished' 
+                    ? 'text-green-400' 
+                    : state.taskStatus === 'running'
+                    ? 'text-blue-400'
+                    : state.taskStatus === 'failed' || state.taskStatus === 'stopped'
+                    ? 'text-red-400'
+                    : 'text-gray-400'
+                }`} />
               </div>
-              <Globe className="w-8 h-8 text-blue-500" />
+              <div>
+                <p className="text-gray-400 text-sm">Task Status</p>
+                <p className="text-white text-xl font-semibold capitalize">
+                  {state.taskStatus || 'Unknown'}
+                </p>
+              </div>
             </div>
           </div>
-          
+
           <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Duration</p>
-                <p className="text-2xl font-bold text-white">{duration}s</p>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center">
+                <Clock className="w-5 h-5 text-purple-400" />
               </div>
-              <Clock className="w-8 h-8 text-purple-500" />
+              <div>
+                <p className="text-gray-400 text-sm">Duration</p>
+                <p className="text-white text-xl font-semibold">{duration}s</p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Company Header */}
-        {state.companyName && (
-          <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-            <div className="flex items-start justify-between">
+        {/* Public Share URL */}
+        {state.publicShareUrl && (
+          <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
+            <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">{state.companyName}</h1>
-                {state.website && (
-                  <a 
-                    href={state.website} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-primary hover:text-primary/80 flex items-center space-x-1"
-                  >
-                    <span>{state.website}</span>
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                )}
+                <h3 className="text-white font-medium">Public Share URL</h3>
+                <p className="text-gray-400 text-sm mt-1 font-mono">{state.publicShareUrl}</p>
               </div>
               
               {/* Share Action */}
@@ -114,7 +150,7 @@ export default function OverviewTab() {
                 {state.publicShareUrl ? (
                   <div className="flex items-center space-x-2">
                     <a
-                      href={state.output.public_share_url}
+                      href={state.publicShareUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
@@ -136,7 +172,7 @@ export default function OverviewTab() {
                     className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
                   >
                     <Share2 className="w-4 h-4" />
-                    <span>Share</span>
+                    <span>Share Results</span>
                   </button>
                 )}
               </div>
@@ -144,35 +180,7 @@ export default function OverviewTab() {
           </div>
         )}
 
-        {/* Public Share URL Display */}
-        {state.publicShareUrl && (
-          <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-medium text-white mb-1">Public Share URL</h3>
-                <p className="text-xs text-gray-400 truncate max-w-md">{state.publicShareUrl}</p>
-              </div>
-                              <div className="flex items-center space-x-2">
-                  <a
-                    href={state.publicShareUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:text-primary/80 text-sm"
-                  >
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-                <button
-                  onClick={handleShare}
-                  className="text-gray-400 hover:text-white text-sm"
-                >
-                  <Share2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Research Summary */}
+        {/* Executive Summary */}
         <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-white mb-4">Executive Summary</h2>
           
@@ -199,23 +207,148 @@ export default function OverviewTab() {
           )}
         </div>
 
-        {/* Key Findings (Mock Data) */}
-        {completedSteps > 2 && (
+        {/* Structured Data Results */}
+        {structuredData && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Funding Overview */}
+            {structuredData.funding_summary && (
+              <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Funding Overview</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Total Funding:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.funding_summary.total_funding)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Last Round:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.funding_summary.last_round)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Last Round Amount:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.funding_summary.last_round_amount)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Valuation:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.funding_summary.valuation)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Investors:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.funding_summary.investors)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Funding Date:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.funding_summary.funding_date)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Team Insights */}
+            {structuredData.team_summary && (
+              <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Team Insights</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Team Size:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.team_summary.team_size)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Leadership:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.team_summary.leadership)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Key Executives:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.team_summary.key_executives)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Founders:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.team_summary.founders)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Company Overview */}
+            {structuredData.company_overview && (
+              <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Company Overview</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Founded:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.company_overview.founded)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Headquarters:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.company_overview.headquarters)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Industry:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.company_overview.industry)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Employee Count:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.company_overview.employee_count)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Website:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.company_overview.website)}</span>
+                  </div>
+                </div>
+                {structuredData.company_overview.description && structuredData.company_overview.description !== "Unknown" && (
+                  <div className="mt-4 pt-4 border-t border-dark-300">
+                    <span className="text-gray-400 text-sm">Description:</span>
+                    <p className="text-white text-sm mt-1">{structuredData.company_overview.description}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Market Analysis */}
+            {structuredData.market_analysis && (
+              <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Market Analysis</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Market Size:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.market_analysis.market_size)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Market Position:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.market_analysis.market_position)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Competitors:</span>
+                    <span className="text-white font-medium">{formatValue(structuredData.market_analysis.competitors)}</span>
+                  </div>
+                </div>
+                {structuredData.market_analysis.competitive_advantage && structuredData.market_analysis.competitive_advantage !== "Unknown" && (
+                  <div className="mt-4 pt-4 border-t border-dark-300">
+                    <span className="text-gray-400 text-sm">Competitive Advantage:</span>
+                    <p className="text-white text-sm mt-1">{structuredData.market_analysis.competitive_advantage}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Show mock data only if no structured data is available and steps > 2 */}
+        {!structuredData && completedSteps > 2 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Funding Overview</h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Total Funding:</span>
-                  <span className="text-white font-medium">$50M+</span>
+                  <span className="text-white font-medium">N/A</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Last Round:</span>
-                  <span className="text-white font-medium">Series B</span>
+                  <span className="text-white font-medium">N/A</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Investors:</span>
-                  <span className="text-white font-medium">8 Total</span>
+                  <span className="text-white font-medium">N/A</span>
                 </div>
               </div>
             </div>
@@ -225,15 +358,15 @@ export default function OverviewTab() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Team Size:</span>
-                  <span className="text-white font-medium">150+ employees</span>
+                  <span className="text-white font-medium">N/A</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Leadership:</span>
-                  <span className="text-white font-medium">5 executives</span>
+                  <span className="text-white font-medium">N/A</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Engineering:</span>
-                  <span className="text-white font-medium">60% of team</span>
+                  <span className="text-white font-medium">N/A</span>
                 </div>
               </div>
             </div>
