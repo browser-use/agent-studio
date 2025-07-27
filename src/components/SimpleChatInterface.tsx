@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react'
 import { Send, Bot, User, FileText, Download, Loader2 } from 'lucide-react'
 import { useTask } from '@/context/TaskContext'
 import { getAppConfig } from '@/config/automation-tasks'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export default function SimpleChatInterface() {
   const { state, dispatch } = useTask()
@@ -209,7 +211,28 @@ export default function SimpleChatInterface() {
                 }`}
               >
                 <div className="text-sm whitespace-pre-line">
-                  {message.content}
+                  {message.type === 'bot' ? (
+                    <ReactMarkdown 
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        h1: ({node, ...props}) => <h1 className="text-lg font-bold mb-3" {...props} />,
+                        h2: ({node, ...props}) => <h2 className="text-base font-semibold mb-2 mt-4" {...props} />,
+                        h3: ({node, ...props}) => <h3 className="text-sm font-medium mb-2 mt-3" {...props} />,
+                        p: ({node, ...props}) => <p className="mb-2 leading-relaxed" {...props} />,
+                        ul: ({node, ...props}) => <ul className="mb-2 list-disc pl-4" {...props} />,
+                        ol: ({node, ...props}) => <ol className="mb-2 list-decimal pl-4" {...props} />,
+                        li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                        strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                        em: ({node, ...props}) => <em {...props} />,
+                        code: ({node, ...props}) => <code className="bg-dark-300 text-primary px-1 py-0.5 rounded text-xs" {...props} />,
+                        pre: ({node, ...props}) => <pre className="bg-dark-300 p-3 rounded overflow-x-auto mb-3 text-xs" {...props} />
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  ) : (
+                    <span className="whitespace-pre-line">{message.content}</span>
+                  )}
                 </div>
 
                 {/* Files */}

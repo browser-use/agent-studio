@@ -2,6 +2,9 @@
 
 import { Clock, FileText, Globe, CheckCircle, Share2, Download, ExternalLink } from 'lucide-react'
 import { useTask } from '@/context/TaskContext'
+import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export default function OverviewTab() {
   const { state } = useTask()
@@ -48,7 +51,7 @@ export default function OverviewTab() {
     }
   }
 
-  if (!state.isRunning && !state.summary && completedSteps === 0) {
+  if (!state.isRunning && !state.executionSummary && completedSteps === 0) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center max-w-md">
@@ -185,10 +188,25 @@ export default function OverviewTab() {
           <h2 className="text-xl font-semibold text-white mb-4">Executive Summary</h2>
           
           {state.executionSummary ? (
-            <div className="prose prose-invert max-w-none">
-              <div className="text-gray-300 leading-relaxed whitespace-pre-line">
+            <div className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-gray-300 prose-li:text-gray-300 prose-strong:text-white prose-em:text-gray-200">
+              <ReactMarkdown 
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  h1: ({node, ...props}) => <h1 className="text-2xl font-bold text-white mb-4" {...props} />,
+                  h2: ({node, ...props}) => <h2 className="text-xl font-semibold text-white mb-3 mt-6" {...props} />,
+                  h3: ({node, ...props}) => <h3 className="text-lg font-medium text-white mb-2 mt-4" {...props} />,
+                  p: ({node, ...props}) => <p className="text-gray-300 mb-3 leading-relaxed" {...props} />,
+                  ul: ({node, ...props}) => <ul className="text-gray-300 mb-3 list-disc pl-6" {...props} />,
+                  ol: ({node, ...props}) => <ol className="text-gray-300 mb-3 list-decimal pl-6" {...props} />,
+                  li: ({node, ...props}) => <li className="text-gray-300 mb-1" {...props} />,
+                  strong: ({node, ...props}) => <strong className="text-white font-semibold" {...props} />,
+                  em: ({node, ...props}) => <em className="text-gray-200" {...props} />,
+                  code: ({node, ...props}) => <code className="bg-dark-300 text-primary px-1 py-0.5 rounded text-sm" {...props} />,
+                  pre: ({node, ...props}) => <pre className="bg-dark-300 p-4 rounded-lg overflow-x-auto mb-4" {...props} />
+                }}
+              >
                 {state.executionSummary}
-              </div>
+              </ReactMarkdown>
             </div>
           ) : state.isRunning ? (
             <div className="space-y-4">
