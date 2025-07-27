@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       task,
       allowed_domains: taskConfig.allowedDomains,
       save_browser_data: false,
-      llm_model: taskConfig.llmModel || 'gpt-4o',
+      llm_model: taskConfig.llmModel || 'gpt-4.1',
       use_adblock: true,
       use_proxy: true,
       proxy_country_code: 'us',

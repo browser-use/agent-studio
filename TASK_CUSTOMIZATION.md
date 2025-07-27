@@ -67,7 +67,7 @@ export const MY_CUSTOM_AUTOMATION: TaskConfig = {
   ],
   
   maxSteps: 100,        // How many automation steps max
-  llmModel: 'gpt-4o'    // AI model to use
+  llmModel: 'gpt-4.1'    // AI model to use
 }
 ```
 
@@ -108,7 +108,7 @@ export const LEGAL_RESEARCH: TaskConfig = {
     'law.com'
   ],
   maxSteps: 80,
-  llmModel: 'gpt-4o'
+  llmModel: 'gpt-4.1'
 }
 ```
 
@@ -134,7 +134,7 @@ export const SALES_INTELLIGENCE: TaskConfig = {
     'google.com'
   ],
   maxSteps: 120,
-  llmModel: 'gpt-4o'
+  llmModel: 'gpt-4.1'
 }
 ```
 
@@ -182,10 +182,10 @@ structuredOutput: {
 
 ### **Different AI Models**
 ```typescript
-llmModel: 'gpt-4o'                    // Best for general research
+llmModel: 'gpt-4.1'                    // Best for general research
 llmModel: 'claude-sonnet-4-20250514'  // Great for analysis/writing
 llmModel: 'gemini-2.5-flash'         // Fast and efficient
-llmModel: 'gpt-4o-mini'              // Cost-effective option
+llmModel: 'gpt-4.1-mini'              // Cost-effective option
 ```
 
 ### **Step Limits**

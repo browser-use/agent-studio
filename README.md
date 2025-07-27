@@ -133,7 +133,7 @@ export const YOUR_AUTOMATION: TaskConfig = {
     'another-source.com'
   ],
   maxSteps: 100,
-  llmModel: 'gpt-4o'
+  llmModel: 'gpt-4.1'
 }
 ```
 
