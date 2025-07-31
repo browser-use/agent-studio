@@ -87,24 +87,21 @@ const response = await fetch('/api/task/start', {
 
 ### Real-time Progress Polling
 ```typescript
-// Example: Monitoring task progress
-const useTaskExecution = (taskId: string) => {
-  const [status, setStatus] = useState<TaskStatus>('idle');
-  
-  useEffect(() => {
-    if (!taskId) return;
-    
-    const pollInterval = setInterval(async () => {
-      const response = await fetch(`/api/task/status/${taskId}`);
-      const data = await response.json();
-      setStatus(data.status);
-    }, 2000);
-    
-    return () => clearInterval(pollInterval);
-  }, [taskId]);
-  
-  return status;
-};
+export const YOUR_AUTOMATION: TaskConfig = {
+  id: 'your-automation',
+  name: 'Your Automation Type',
+  description: 'What your automation focuses on',
+  prompt: `Analyze "{companyName}" focusing on:
+  1. Your specific research areas
+  2. Data sources you want to use
+  3. Output format requirements`,
+  allowedDomains: [
+    'your-data-source.com',
+    'another-source.com'
+  ],
+  maxSteps: 100,
+  llmModel: 'gpt-4.1'
+}
 ```
 
 ### File Download Handling

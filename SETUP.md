@@ -110,7 +110,7 @@ The platform performs comprehensive startup analysis:
 Edit `src/app/api/task/start/route.ts` to customize:
 - Analysis instructions and prompts
 - Allowed domains for web scraping
-- LLM model selection (GPT-4o, Claude, Gemini)
+- LLM model selection (gpt-4.1, Claude, Gemini)
 - Maximum automation steps
 - Screenshot and file generation settings
 
