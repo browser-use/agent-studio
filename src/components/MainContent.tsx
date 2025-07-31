@@ -1,26 +1,39 @@
 'use client'
 
-import { useState } from 'react'
-import { FileText, Camera, Download } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { FileText, Camera, Download, Monitor } from 'lucide-react'
 import OverviewTab from './tabs/OverviewTab'
 import StepsTab from './tabs/StepsTab'
 import FilesTab from './tabs/FilesTab'
+import LiveBrowserTab from './tabs/LiveBrowserTab'
+import { useTask } from '@/context/TaskContext'
 
-type TabType = 'overview' | 'steps' | 'files'
+type TabType = 'overview' | 'steps' | 'files' | 'live'
 
 const tabs = [
   { id: 'overview' as TabType, label: 'Overview', icon: FileText },
+  { id: 'live' as TabType, label: 'Live Browser', icon: Monitor },
   { id: 'steps' as TabType, label: 'Steps & Screenshots', icon: Camera },
   { id: 'files' as TabType, label: 'Files & Downloads', icon: Download },
 ]
 
 export default function MainContent() {
+  const { state } = useTask()
   const [activeTab, setActiveTab] = useState<TabType>('overview')
+
+  // Auto-switch to Live Browser tab when live URL becomes available
+  useEffect(() => {
+    if (state.liveUrl && state.isRunning && activeTab === 'overview') {
+      setActiveTab('live')
+    }
+  }, [state.liveUrl, state.isRunning, activeTab])
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'overview':
         return <OverviewTab />
+      case 'live':
+        return <LiveBrowserTab />
       case 'steps':
         return <StepsTab />
       case 'files':
@@ -49,6 +62,10 @@ export default function MainContent() {
               >
                 <IconComponent className="w-4 h-4" />
                 <span>{tab.label}</span>
+                {/* Add live indicator for Live Browser tab */}
+                {tab.id === 'live' && state.liveUrl && state.isRunning && (
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                )}
               </button>
             )
           })}

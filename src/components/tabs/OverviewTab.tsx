@@ -80,7 +80,7 @@ export default function OverviewTab() {
               </div>
             </div>
           </div>
-
+          
           <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center">
@@ -92,7 +92,7 @@ export default function OverviewTab() {
               </div>
             </div>
           </div>
-
+          
           <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
             <div className="flex items-center space-x-3">
               <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
@@ -122,7 +122,7 @@ export default function OverviewTab() {
               </div>
             </div>
           </div>
-
+          
           <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center">

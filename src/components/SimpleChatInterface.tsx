@@ -145,7 +145,13 @@ export default function SimpleChatInterface() {
       {/* Header */}
       <div className="bg-dark-300 border-b border-dark-200 p-4">
         <div className="flex items-center space-x-2">
-          <Bot className="w-6 h-6 text-primary" />
+          <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
+            <img 
+              src="/images/logo.png" 
+              alt="Browser Use Logo"
+              className="w-5 h-5 object-contain"
+            />
+          </div>
           <h1 className="text-xl font-semibold text-white">{appConfig.branding.companyName}</h1>
         </div>
         <p className="text-sm text-gray-400 mt-1">{appConfig.instructions.simple}</p>
@@ -155,7 +161,13 @@ export default function SimpleChatInterface() {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
           <div className="text-center py-12">
-            <Bot className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center mx-auto mb-4">
+              <img 
+                src="/images/logo.png" 
+                alt="Browser Use Logo"
+                className="w-12 h-12 object-contain"
+              />
+            </div>
             <h3 className="text-lg font-medium text-white mb-2">Welcome to {appConfig.branding.companyName}</h3>
             <p className="text-gray-400 max-w-md mx-auto">
               {appConfig.description}

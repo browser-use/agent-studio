@@ -22,7 +22,7 @@ export interface TaskConfig {
   prompt: string
   allowedDomains?: string[]
   maxSteps?: number
-  llmModel?: 'gpt-4o' | 'gpt-4o-mini' | 'claude-sonnet-4-20250514' | 'gemini-2.5-flash'
+  llmModel?: 'gpt-4.1-mini' | 'gpt-4.1' | 'claude-sonnet-4-20250514' | 'gemini-2.5-flash'
   structuredOutput?: object
 }
 
@@ -63,7 +63,7 @@ export const STARTUP_ANALYSIS: TaskConfig = {
 - Take screenshots of important data sources`,
 
   maxSteps: 150,
-  llmModel: 'gpt-4o',
+  llmModel: 'gpt-4.1-mini',
   structuredOutput: {
     type: 'object',
     properties: {
@@ -128,7 +128,7 @@ export const VC_ANALYSIS: TaskConfig = {
 Save findings to structured files and capture screenshots of key portfolio data.`,
 
   maxSteps: 100,
-  llmModel: 'gpt-4o'
+  llmModel: 'gpt-4.1-mini'
 }
 
 // 🏢 COMPETITOR ANALYSIS TASK
@@ -146,7 +146,7 @@ export const COMPETITOR_ANALYSIS: TaskConfig = {
 
 Generate comparison tables and competitive landscape mapping.`,
   maxSteps: 120,
-  llmModel: 'gpt-4o'
+  llmModel: 'gpt-4.1-mini'
 }
 
 // 📊 MARKET ANALYSIS TASK  
@@ -164,7 +164,7 @@ export const MARKET_ANALYSIS: TaskConfig = {
 
 Generate market sizing models and trend analysis reports.`,
   maxSteps: 100,
-  llmModel: 'gpt-4o'
+  llmModel: 'gpt-4.1-mini'
 }
 
 // 🎯 DEFAULT TASK (what gets used if no specific task is selected)
@@ -181,7 +181,7 @@ export const AVAILABLE_TASKS = {
 // 🎨 APP CONFIGURATION
 // Customize your app's branding, title, and instructions here!
 export const APP_CONFIG: AppConfig = {
-  title: "AI Agent Demo Platform",
+  title: "Browser Use Studio",
   description: "Powerful AI web automation for any use case",
   instructions: {
     simple: "Ask me to analyze any company or website using AI automation",
@@ -195,7 +195,7 @@ export const APP_CONFIG: AppConfig = {
     "Analyze Y Combinator"
   ],
   branding: {
-    companyName: "Agent Studio",
+    companyName: "Browser Use Studio",
     tagline: "AI Automation Made Simple"
   }
 }

@@ -60,8 +60,12 @@ export default function Sidebar() {
       {/* Logo/Branding Section */}
       <div className="p-6 border-b border-dark-300">
         <div className="flex items-center space-x-3 mb-4">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">🤖</span>
+          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+            <img 
+              src="/images/logo.png" 
+              alt="Browser Use Logo"
+              className="w-8 h-8 object-contain"
+            />
           </div>
           <div>
             <h1 className="text-xl font-bold text-white">{appConfig.title}</h1>
@@ -139,7 +143,7 @@ export default function Sidebar() {
       </div>
 
       {/* Progress Section */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
         <ProgressSection />
       </div>
     </div>

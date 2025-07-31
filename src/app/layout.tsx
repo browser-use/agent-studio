@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Agent Studio - AI Research Demo Platform',
-  description: 'AI agent that researches any startup, analyzes their funding, team, market position, and generates a comprehensive report in minutes.',
+  title: 'Browser Use Studio - AI Web Automation Platform',
+  description: 'Powerful AI web automation platform that researches companies, analyzes their data, and generates comprehensive reports through intelligent browser automation.',
 }
 
 export default function RootLayout({

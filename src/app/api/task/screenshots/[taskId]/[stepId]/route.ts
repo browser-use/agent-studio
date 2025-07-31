@@ -15,89 +15,87 @@ export async function GET(
       )
     }
 
-    console.log('🖼️ [SCREENSHOT API] Fetching screenshot for:', { taskId, stepId })
+    console.log('🖼️ [SCREENSHOT API] Fetching screenshots for task:', taskId, 'step:', stepId)
 
-    // Try different potential Browser Use API endpoints for screenshots
-    const possibleEndpoints = [
-      `https://api.browser-use.com/api/v1/task/${taskId}/step/${stepId}/screenshot`,
-      `https://api.browser-use.com/api/v1/task/${taskId}/screenshots/${stepId}`,
-      `https://api.browser-use.com/api/v1/screenshot/${taskId}/${stepId}`,
-    ]
-
-    for (const endpoint of possibleEndpoints) {
-      console.log('🔍 [SCREENSHOT API] Trying endpoint:', endpoint)
-      
-      const response = await fetch(endpoint, {
-        headers: {
-          'Authorization': `Bearer ${browserUseApiKey}`,
-        },
-      })
-
-      if (response.ok) {
-        console.log('✅ [SCREENSHOT API] Found screenshot at:', endpoint)
-        
-        // If it's an image, return it directly
-        const contentType = response.headers.get('content-type')
-        if (contentType?.startsWith('image/')) {
-          const imageBuffer = await response.arrayBuffer()
-          return new NextResponse(imageBuffer, {
-            headers: {
-              'Content-Type': contentType,
-              'Cache-Control': 'public, max-age=3600'
-            }
-          })
-        }
-        
-        // If it's JSON with image URL, return the URL
-        const data = await response.json()
-        if (data.screenshot_url || data.image_url || data.url) {
-          return NextResponse.json({
-            screenshot_url: data.screenshot_url || data.image_url || data.url
-          })
-        }
-      } else {
-        console.log('❌ [SCREENSHOT API] Failed at:', endpoint, response.status)
-      }
-    }
-
-    // If no specific endpoints work, try to find screenshots in the task data
-    console.log('🔍 [SCREENSHOT API] Trying to get screenshot from task data')
-    const taskResponse = await fetch(`https://api.browser-use.com/api/v1/task/${taskId}`, {
+    // Use the correct Browser Use API endpoint for screenshots
+    const screenshotsResponse = await fetch(`https://api.browser-use.com/api/v1/task/${taskId}/screenshots`, {
       headers: {
         'Authorization': `Bearer ${browserUseApiKey}`,
       },
     })
 
-    if (taskResponse.ok) {
-      const taskData = await taskResponse.json()
-      console.log('📊 [SCREENSHOT API] Task data received, looking for screenshots...')
-      
-      // Look for screenshot in step data
-      const step = taskData.steps?.find((s: any) => s.id === stepId)
-      if (step) {
-        // Check various possible screenshot fields
-        const screenshotUrl = step.screenshot_url || step.screenshot || step.image_url || step.image
-        if (screenshotUrl) {
-          console.log('✅ [SCREENSHOT API] Found screenshot URL in step data:', screenshotUrl)
-          return NextResponse.json({ screenshot_url: screenshotUrl })
-        }
-      }
-      
-      // Check if there's a screenshots array in task data
-      if (taskData.screenshots) {
-        const screenshot = taskData.screenshots.find((s: any) => s.step_id === stepId)
-        if (screenshot) {
-          console.log('✅ [SCREENSHOT API] Found screenshot in screenshots array:', screenshot.url)
-          return NextResponse.json({ screenshot_url: screenshot.url })
-        }
-      }
+    if (!screenshotsResponse.ok) {
+      console.log('❌ [SCREENSHOT API] Failed to fetch screenshots:', screenshotsResponse.status)
+      return NextResponse.json(
+        { error: 'Failed to fetch screenshots from Browser Use API' },
+        { status: screenshotsResponse.status }
+      )
     }
 
-    console.log('❌ [SCREENSHOT API] No screenshot found for step:', stepId)
-    return NextResponse.json(
-      { error: 'Screenshot not found for this step' },
-      { status: 404 }
-    )
+    const screenshotsData = await screenshotsResponse.json()
+    console.log('📊 [SCREENSHOT API] Screenshots response:', {
+      totalScreenshots: screenshotsData.screenshots?.length || 0,
+      hasScreenshots: !!screenshotsData.screenshots
+    })
+
+    if (!screenshotsData.screenshots || screenshotsData.screenshots.length === 0) {
+      console.log('❌ [SCREENSHOT API] No screenshots available for task:', taskId)
+      return NextResponse.json(
+        { error: 'No screenshots available for this task' },
+        { status: 404 }
+      )
+    }
+
+    // Try to find a screenshot that matches the step
+    // Screenshots might be indexed by step number or have step info in the URL/filename
+    const stepNumber = parseInt(stepId.split('-')[0]) || 0 // Try to extract step number
+    let screenshotUrl = null
+
+    // Method 1: Try to find by step index (screenshots array is likely ordered by step)
+    if (screenshotsData.screenshots.length > stepNumber - 1 && stepNumber > 0) {
+      screenshotUrl = screenshotsData.screenshots[stepNumber - 1]
+      console.log(`✅ [SCREENSHOT API] Found screenshot by step index ${stepNumber - 1}:`, screenshotUrl)
+    }
+
+    // Method 2: If no step-specific match, get the latest screenshot
+    if (!screenshotUrl) {
+      screenshotUrl = screenshotsData.screenshots[screenshotsData.screenshots.length - 1]
+      console.log('✅ [SCREENSHOT API] Using latest screenshot:', screenshotUrl)
+    }
+
+    // Fetch the actual screenshot image
+    try {
+      const imageResponse = await fetch(screenshotUrl)
+      
+      if (!imageResponse.ok) {
+        console.log('❌ [SCREENSHOT API] Failed to fetch screenshot image:', imageResponse.status)
+        return NextResponse.json({ error: 'Failed to fetch screenshot image' }, { status: 404 })
+      }
+
+      const contentType = imageResponse.headers.get('content-type')
+      
+      if (contentType?.startsWith('image/')) {
+        // Return the image directly
+        const imageBuffer = await imageResponse.arrayBuffer()
+        console.log('✅ [SCREENSHOT API] Returning screenshot image directly')
+        
+        return new NextResponse(imageBuffer, {
+          headers: {
+            'Content-Type': contentType,
+            'Cache-Control': 'public, max-age=3600',
+            'Access-Control-Allow-Origin': '*'
+          }
+        })
+      } else {
+        // Return the screenshot URL
+        console.log('✅ [SCREENSHOT API] Returning screenshot URL')
+        return NextResponse.json({ screenshot_url: screenshotUrl })
+      }
+    } catch (imageError) {
+      console.error('❌ [SCREENSHOT API] Error fetching screenshot image:', imageError)
+      // Fallback: return the URL even if we can't fetch the image
+      return NextResponse.json({ screenshot_url: screenshotUrl })
+    }
 
   } catch (error) {
     console.error('❌ [SCREENSHOT API] Error:', error)

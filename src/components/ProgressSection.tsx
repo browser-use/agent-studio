@@ -89,8 +89,9 @@ export default function ProgressSection() {
       {/* Steps from Browser Use */}
       {state.steps.length > 0 && (
         <div className="space-y-3">
-          <h4 className="text-sm font-medium text-gray-300">Automation Steps</h4>
-          {state.steps.map((step, index) => (
+          <h4 className="text-sm font-medium text-gray-300 sticky top-0 bg-dark-200 py-2 -mx-6 px-6 z-10">Automation Steps</h4>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {state.steps.map((step, index) => (
             <div
               key={step.id}
               className="p-3 rounded-lg border bg-dark-300 border-dark-400"
@@ -118,7 +119,8 @@ export default function ProgressSection() {
                 </div>
               </div>
             </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

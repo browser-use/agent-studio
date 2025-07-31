@@ -1,288 +1,275 @@
-# 🤖 Agent Studio - AI Research Demo Platform
+# 🤖 Browser Use Cloud API Demo - Integration Examples & UI Components
 
-A comprehensive Next.js template for creating AI web automation agent demos. This platform showcases AI agents in action, specifically designed for startup research, funding analysis, and competitive intelligence.
+A comprehensive demo repository showcasing how to integrate the [Browser Use Cloud API](https://docs.browser-use.com) into web applications. This project demonstrates real-world implementation patterns, UI components, and integration techniques that developers can reference and customize for their own projects.
 
-## ✨ Features
+![Main Interface](./public/images/main.png)
 
-### 🎯 Core Platform
-- **Professional UI**: Dark theme with cyan accents and modern design
-- **Real-time Progress**: Live updates with step-by-step execution tracking
-- **3-Tab Interface**: Overview, Steps & Screenshots, Files & Downloads
-- **Responsive Design**: Mobile-friendly layout with professional aesthetics
+## 🎯 Purpose & Overview
 
-### 📊 Demo Capabilities
-- **Startup Analysis**: Company discovery, funding analysis, team research
-- **Visual Documentation**: Screenshot capture at each automation step
-- **File Generation**: PDF reports, Excel data, JSON exports, ZIP archives
-- **Progress Tracking**: Real-time status indicators and timing metrics
+This repository serves as a **reference implementation** for integrating Browser Use Cloud API into modern web applications. It's designed for developers who want to:
 
-### 🔧 Technical Features
-- **Next.js 14**: App Router with TypeScript support
-- **Dual UI Modes**: Simple chatbot or advanced dashboard interface
-- **Tailwind CSS**: Utility-first styling with custom design system
-- **Context Management**: Global state for task progress and results
-- **Centralized Config**: Single-file customization for branding and tasks
-- **Easy Customization**: Modular architecture for different use cases
+- **Learn API Integration**: See real-world examples of Browser Use Cloud API implementation
+- **Reference UI Components**: Copy and adapt professional UI components for automation interfaces
+- **Understand Data Flow**: Learn how to handle real-time automation data, progress tracking, and file management
+- **Customize for Projects**: Use this as a starting point for building custom automation interfaces
+
+## ✨ Demo Features & Components
+
+### 🖥️ Live Browser View
+Real-time browser automation viewing with embedded iframe display.
+
+![Live Browser View](./public/images/live_url.png)
+
+### 📊 Progress & Steps Tracking
+Step-by-step execution monitoring with screenshots and timing data.
+
+![Steps Updates](./public/images/steps.png)
+
+### 📁 File Management & Downloads
+Generated files display with download capabilities (PDFs, Excel, JSON, ZIP).
+
+![Files Section](./public/images/files.png)
+
+### 🎨 Key UI Components Demonstrated
+
+- **Real-time Progress Indicators** - Live status updates and step completion
+- **Tabbed Interface** - Overview, Live Browser, Steps, Files organization
+- **File Download System** - Handle multiple file types from automation results
+- **Screenshot Gallery** - Display automation screenshots at each step
+- **Responsive Design** - Mobile-friendly layout with professional aesthetics
+- **Error Handling** - Proper error states and user feedback
+- **Loading States** - Smooth loading experiences during automation
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+ and Yarn
-- Modern web browser
-- Browser Use API key ([Get yours here](https://docs.browser-use.com))
+- Browser Use Cloud API key ([Get yours here](https://docs.browser-use.com))
 
-### Installation
+### Setup Instructions
 
-1. **Clone the repository**
-   \`\`\`bash
+1. **Clone and Install**
+   ```bash
    git clone <repository-url>
    cd agent-studio
-   \`\`\`
-
-2. **Install dependencies**
-   \`\`\`bash
    yarn install
-   \`\`\`
+   ```
 
-3. **Configure environment**
-   \`\`\`bash
-   cp .env.local.example .env.local
-   # Edit .env.local and add your Browser Use API key
-   \`\`\`
-
-4. **Start development server**
-   \`\`\`bash
-   yarn dev
-   \`\`\`
-
-5. **Choose UI Mode** (optional)
-   - **Simple Mode**: Clean chatbot interface for end-users
-   - **Advanced Mode**: Full dashboard with tabs and detailed controls
+2. **Configure API Key**
    ```bash
-   # Add to .env.local
-   NEXT_PUBLIC_UI_MODE=simple    # or "advanced" (default)
+   cp .env.local.example .env.local
+   # Add your Browser Use API key to .env.local
+   BROWSER_USE_API_KEY=your_api_key_here
    ```
 
-6. **Open in browser**
-   Navigate to \`http://localhost:3000\`
+3. **Run Demo**
+   ```bash
+   yarn dev
+   ```
 
-7. **Customize for your use case** (optional)
-   See [TASK_CUSTOMIZATION.md](TASK_CUSTOMIZATION.md) for easy task setup
+4. **Open Demo**
+   Navigate to `http://localhost:3000`
 
-## 🎮 Demo Usage
+## 🔧 API Integration Examples
 
-### Simple Mode (Chatbot Interface)
-1. **Type your request** - "Analyze OpenAI" or provide a website URL
-2. **Watch real-time progress** - See step-by-step automation status
-3. **Get results** - Receive analysis summary and downloadable files
-
-### Advanced Mode (Dashboard Interface)  
-1. **Enter Target Details**
-   - Company name (required)
-   - Website URL (optional)
-
-2. **Start Automation**
-   - Click "Start Task" button
-   - Watch real-time progress in sidebar
-   - Monitor step completion with timestamps
-
-3. **View Results**
-   - **Overview Tab**: Executive summary and key metrics
-   - **Steps Tab**: Timeline view with screenshots
-   - **Files Tab**: Generated reports and downloads
-
-## 🎯 **Quick Customization**
-
-Want to customize for your specific use case? It's super easy!
-
-**One file to edit**: `src/config/automation-tasks.ts`
-
+### Task Creation & Management
 ```typescript
-// Just modify this file to create your custom automation tasks!
-export const YOUR_AUTOMATION: TaskConfig = {
-  id: 'your-automation',
-  name: 'Your Automation Type', 
-  prompt: 'Your custom automation instructions...'
-}
+// Example: Starting an automation task
+const response = await fetch('/api/task/start', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    prompt: "Your automation instructions",
+    maxSteps: 50
+  })
+});
 ```
 
-📖 **[Full Customization Guide →](TASK_CUSTOMIZATION.md)**
-
-## 🔄 Easy Customization Guide
-
-### 🎯 **Quick Task Customization**
-
-**Step 1: Edit the task configuration file**
-```bash
-# Open the main task config file
-src/config/automation-tasks.ts
-```
-
-**Step 2: Modify or add your automation task**
+### Real-time Progress Polling
 ```typescript
-export const YOUR_AUTOMATION: TaskConfig = {
-  id: 'your-automation',
-  name: 'Your Automation Type',
-  description: 'What your automation focuses on',
-  prompt: `Analyze "{companyName}" focusing on:
-  1. Your specific research areas
-  2. Data sources you want to use
-  3. Output format requirements`,
-  allowedDomains: [
-    'your-data-source.com',
-    'another-source.com'
-  ],
-  maxSteps: 100,
-  llmModel: 'gpt-4o'
-}
+// Example: Monitoring task progress
+const useTaskExecution = (taskId: string) => {
+  const [status, setStatus] = useState<TaskStatus>('idle');
+  
+  useEffect(() => {
+    if (!taskId) return;
+    
+    const pollInterval = setInterval(async () => {
+      const response = await fetch(`/api/task/status/${taskId}`);
+      const data = await response.json();
+      setStatus(data.status);
+    }, 2000);
+    
+    return () => clearInterval(pollInterval);
+  }, [taskId]);
+  
+  return status;
+};
 ```
 
-**Step 3: That's it! 🎉**
-- Your new task is automatically available
-- No code changes needed elsewhere
-- Just restart the app to see changes
+### File Download Handling
+```typescript
+// Example: Downloading generated files
+const downloadFile = async (taskId: string, fileName: string) => {
+  const response = await fetch(`/api/task/files/${taskId}/${fileName}`);
+  const blob = await response.blob();
+  
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  a.click();
+};
+```
 
-### 📋 **Available Task Templates**
+## 🎨 UI Components You Can Reuse
 
-The platform includes ready-to-use tasks:
+### 1. Progress Section Component
+- Real-time status updates
+- Step-by-step progress tracking
+- Timing information display
 
-- **🚀 Startup Analysis** (default) - Funding, team, market analysis
-- **🏦 VC Analysis** - Fund analysis, portfolio, investment thesis  
-- **🏢 Competitor Analysis** - Direct competitors, pricing, positioning
-- **📊 Market Analysis** - Market size, trends, opportunities
+### 2. Live Browser Tab Component  
+- Embedded iframe for live viewing
+- Loading states and error handling
+- Responsive iframe sizing
 
-### 🛠️ **Advanced Customization**
+### 3. Steps Tab Component
+- Screenshot gallery with timestamps
+- Step descriptions and status
+- Expandable detail views
 
-1. **Custom Branding**
-   ```tsx
-   // src/components/Sidebar.tsx - Line 30
-   <h1>Your Company Name</h1>
-   <h2>Your Use Case</h2>
-   ```
+### 4. Files Tab Component
+- File type detection and icons
+- Download functionality
+- File size and metadata display
 
-2. **Custom File Types**
-   ```typescript
-   // src/context/TaskContext.tsx
-   type: 'pdf' | 'excel' | 'json' | 'zip' | 'image' | 'your-type'
-   ```
+### 5. Sidebar Navigation
+- Task status indicators
+- Clean, professional design
+- Responsive mobile layout
 
-3. **Additional Data Sources**
-   ```typescript
-   // Just add domains to allowedDomains in automation-tasks.ts
-   allowedDomains: ['new-source.com', 'api-provider.com']
-   ```
+## 🛠️ Customization Guide
+
+### Modify Input Interface
+```typescript
+// src/components/SimpleChatInterface.tsx
+// Customize the input form for your specific use case
+const handleSubmit = (input: string) => {
+  // Your custom input processing logic
+  startAutomation(input);
+};
+```
+
+### Customize Output Display
+```typescript
+// src/components/tabs/OverviewTab.tsx
+// Modify how automation results are displayed
+const renderResults = (data: AutomationResults) => {
+  // Your custom result visualization
+  return <CustomResultsView data={data} />;
+};
+```
+
+### Add New File Types
+```typescript
+// src/context/TaskContext.tsx
+// Extend supported file types
+type FileType = 'pdf' | 'excel' | 'json' | 'zip' | 'csv' | 'your_type';
+```
+
+### Brand Customization
+```typescript
+// src/components/Sidebar.tsx
+// Update branding and titles
+<h1 className="text-2xl font-bold">Your App Name</h1>
+<h2 className="text-gray-400">Your Use Case Description</h2>
+```
 
 ## 📁 Project Structure
 
-\`\`\`
+```
 src/
-├── app/                    # Next.js app router
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Home page
-├── components/            # React components
-│   ├── tabs/             # Tab content components
-│   ├── MainContent.tsx   # Main area with tabs
-│   ├── ProgressSection.tsx
-│   └── Sidebar.tsx       # Left sidebar
-├── context/              # React context
-│   └── TaskContext.tsx
-└── hooks/                # Custom hooks
-    └── useTaskExecution.ts
-\`\`\`
+├── app/api/task/          # Browser Use API integration endpoints
+│   ├── start/            # Task creation endpoint
+│   ├── status/           # Progress polling endpoint
+│   ├── files/            # File download endpoints
+│   └── screenshots/      # Screenshot retrieval
+├── components/           # Reusable UI components
+│   ├── tabs/            # Tab content components
+│   ├── MainContent.tsx  # Main tabbed interface
+│   ├── ProgressSection.tsx # Real-time progress display
+│   └── SimpleChatInterface.tsx # Input interface
+├── context/             # React context for state management
+│   └── TaskContext.tsx  # Global task state
+├── hooks/               # Custom React hooks
+│   └── useTaskExecution.ts # Task execution logic
+└── lib/                 # Utility libraries
+    └── browserUseApi.ts # API client functions
+```
 
-## 🎨 Design System
+## 🔗 Browser Use Cloud API Integration
 
-### Colors
-- **Primary**: #00d4ff (Cyan)
-- **Dark Backgrounds**: #1a1a1a, #2a2a2a, #3a3a3a
-- **Text**: White, grays for secondary content
+### Implemented Endpoints
+- ✅ **POST** `/api/v1/run-task` - Create automation tasks
+- ✅ **GET** `/api/v1/task/{taskId}` - Monitor task progress  
+- ✅ **GET** `/api/v1/task/{taskId}/output-file/{fileName}` - Download files
+- ✅ **Real-time polling** - Live progress updates
+- ✅ **Screenshot capture** - Step-by-step visual documentation
 
-### Typography
-- **Font**: Inter (Google Fonts)
-- **Weights**: 300, 400, 500, 600, 700
-
-### Components
-- **Cards**: Rounded corners, dark backgrounds, subtle borders
-- **Buttons**: Primary cyan, hover states, disabled states
-- **Progress**: Animated indicators, status colors
-
-## 📊 Mock Data Structure
-
-The platform includes realistic mock data for:
-- Company research steps (6 phases)
-- Generated files (PDF, Excel, JSON, ZIP)
-- Progress timing and screenshots
-- Executive summary with key metrics
-
-## 🔗 Browser Use API Integration
-
-This platform is now fully integrated with [Browser Use API](https://docs.browser-use.com/api-reference/run-task) for real web automation:
-
-### ✅ **Implemented Features**
-- **Task Creation**: Automatically creates automation tasks via `/api/v1/run-task`
-- **Real-time Polling**: Monitors task progress via `/api/v1/task/{taskId}`
-- **File Downloads**: Retrieves generated files via `/api/v1/task/{taskId}/output-file/{fileName}`
-- **Screenshot Capture**: Displays actual browser screenshots from automation
-- **Structured Output**: Parses JSON results into readable analysis summaries
-
-### 📋 **API Configuration**
-\`\`\`env
+### Demo Configuration
+```env
+# Required environment variables
 BROWSER_USE_API_KEY=your_api_key_here
-\`\`\`
+NEXT_PUBLIC_UI_MODE=advanced  # or "simple"
+```
 
-### 🎯 **Analysis Capabilities**
-The platform automatically analyzes:
-- Company discovery and basic information
-- Funding rounds and investor data
-- Team composition and leadership
-- Market analysis and competitive landscape
-- Generated files (PDF reports, Excel data, JSON exports)
+## 🎯 Use This Demo For
 
-### 🔄 **Future Integration Points**
-- **OpenAI/Anthropic**: Enhanced LLM processing
-- **File Storage**: AWS S3, Google Drive integration
-- **Analytics**: Usage tracking and metrics
-- **Webhooks**: Real-time notifications
+### Learning API Integration
+- Study the API client implementation in `src/lib/browserUseApi.ts`
+- See error handling patterns in API routes
+- Understand polling and real-time updates
+
+### Building Custom UIs
+- Copy component patterns from `src/components/`
+- Adapt the tabbed interface design
+- Reuse progress tracking components
+
+### Reference Implementation
+- See complete data flow from API to UI
+- Study file handling and download patterns
+- Learn responsive design techniques
 
 ## 🚢 Deployment
 
 ### Vercel (Recommended)
-\`\`\`bash
+```bash
 yarn build
-# Deploy to Vercel
-\`\`\`
+vercel deploy
+```
 
-### Docker
-\`\`\`dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN yarn install
-COPY . .
-RUN yarn build
-EXPOSE 3000
-CMD ["yarn", "start"]
-\`\`\`
+### Environment Variables
+Set these in your deployment platform:
+```env
+BROWSER_USE_API_KEY=your_api_key_here
+```
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create feature branch (\`git checkout -b feature/amazing-feature\`)
-3. Commit changes (\`git commit -m 'Add amazing feature'\`)
-4. Push to branch (\`git push origin feature/amazing-feature\`)
-5. Open Pull Request
+This demo is open for community contributions:
+
+1. **Add UI Components** - New interface patterns
+2. **API Examples** - Additional integration patterns  
+3. **Customization Guides** - Documentation improvements
+4. **Bug Fixes** - Issue resolution
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- **Documentation**: Check the code comments and examples
-- **Issues**: Open GitHub issues for bugs or feature requests
-- **Discussions**: Use GitHub discussions for questions
+MIT License - Use this code freely in your projects.
 
 ---
 
-**Built with ❤️ for the AI automation community**
+**🎨 Built to showcase Browser Use Cloud API integration patterns**
+
+Ready to build your own automation interface? Use this demo as your starting point!
