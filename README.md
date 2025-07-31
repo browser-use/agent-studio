@@ -1,4 +1,4 @@
-# 🤖 Browser Use Cloud API Demo - Integration Examples & UI Components
+# 🤖 Browser Use Agent Studio - Integration Examples & UI Components
 
 A comprehensive demo repository showcasing how to integrate the [Browser Use Cloud API](https://docs.browser-use.com) into web applications. This project demonstrates real-world implementation patterns, UI components, and integration techniques that developers can reference and customize for their own projects.
 
